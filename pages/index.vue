@@ -5,6 +5,7 @@
         <img class="header-logo" src="../static/logo2.png" alt="#" />
         <span>Cổng tìm kiếm thông tin thú cưng</span>
         <SearchInput
+          :search="search"
           :placeholder="'Nhập PetID bằng số để tìm kiếm'"
           :clearable="true"
           :size="'default'"
@@ -16,12 +17,10 @@
       </b-container>
     </template>
     <template class="main">
-      <b-container
-        class="main-container-empty"
-        v-if="pagination.keyword == '' || isPetsEmpty"
-      >
+      <b-container class="main-container-empty" v-if="isPetsEmpty">
+        <div></div>
       </b-container>
-      <b-container v-else-if="pagination.keyword" class="main-container">
+      <b-container v-else class="main-container">
         <div class="header-id"></div>
         <div class="bachkground-row"></div>
         <div class="container-content">
@@ -97,6 +96,7 @@
 <script>
 // lib
 import { mapGetters, mapActions } from "vuex";
+import isEmpty from "lodash/isEmpty";
 import _ from "lodash";
 // component
 import SearchInput from "@components/SearchInput";
@@ -112,22 +112,31 @@ export default {
       }
     };
   },
+
   computed: {
     ...mapGetters({
       loading: "pet/loading",
       pets: "pet/petSearch"
     }),
     isPetsEmpty() {
-      return this.pets.length === 0;
+      return _.isEmpty(this.pets);
+    },
+    getQueryId() {
+      return this.$route.query.id || "";
     }
   },
   methods: {
     ...mapActions({
       getPetSearchList: "pet/PET_SEARCH_GLOBAL"
     }),
+
     onChangeHandler(val) {
+      if (val) {
+        this.$router.push({ query: { id: val } });
+      } else [this.$router.push({ query: "" })];
       this.pagination.keyword = val;
     },
+
     onSortNameHandler({ prop, order }) {
       const sort = {
         field: order ? prop : "",
@@ -142,9 +151,15 @@ export default {
       document.getElementById("id-search-pet").focus();
     }
   },
-  mounted: function() {
+
+  mounted: async function() {
     this.autoFocusInput();
+    if (this.getQueryId) {
+      this.search = this.getQueryId;
+      await this.getPetSearchList({ keyword: this.getQueryId });
+    }
   },
+
   watch: {
     pagination: {
       handler(val) {
@@ -152,12 +167,17 @@ export default {
       },
       deep: true
     }
-  },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.getPetSearchList(_.pickBy(vm.pagination, value => value));
-    });
   }
+
+  // async created() {
+  //   this.pagination.keyword = this.getQueryId;
+  // },
+
+  // beforeRouteEnter(to, from, next) {
+  //   next(vm => {
+  //     vm.getPetSearchList(_.pickBy(vm.pagination, value => value));
+  //   });
+  // }
 };
 </script>
 

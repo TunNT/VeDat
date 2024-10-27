@@ -1,6 +1,7 @@
 <template>
   <el-input
     v-model="input"
+    :value="search"
     :size="size"
     type="text"
     :placeholder="placeholder"
@@ -21,11 +22,15 @@
 <script>
 export default {
   props: {
+    search: {
+      type: String,
+      default: ""
+    },
     label: {
       type: String,
       default: ""
     },
-     idElement: {
+    idElement: {
       type: String,
       default: ""
     },
@@ -61,13 +66,22 @@ export default {
   data: () => ({
     input: ""
   }),
+  watch: {
+    search: {
+      immediate: true,
+      deep: true,
+      handler(newValue) {
+        this.input = newValue;
+      }
+    }
+  },
   methods: {
     onClearHandler() {
       $emit("onChangeHandler", "");
     },
     onInputHandler(event) {
-      if(!this.$props.typeInput) return
-      this.input = event.replace(/[^0-9]/g, '')
+      if (!this.$props.typeInput) return;
+      this.input = event.replace(/[^0-9]/g, "");
     }
   }
 };

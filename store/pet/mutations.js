@@ -5,7 +5,7 @@ const mutations = {
     state.pets = data[0] || []
   },
 
-  [MutationTypes.SET_PET_SEARCH](state, {data}) {
+  [MutationTypes.SET_PET_SEARCH](state, { data }) {
     state.petSearch = data[0] || []
   },
 
