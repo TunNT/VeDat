@@ -169,10 +169,6 @@ export default {
     }
   }
 
-  // async created() {
-  //   this.pagination.keyword = this.getQueryId;
-  // },
-
   // beforeRouteEnter(to, from, next) {
   //   next(vm => {
   //     vm.getPetSearchList(_.pickBy(vm.pagination, value => value));

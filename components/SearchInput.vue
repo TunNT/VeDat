@@ -1,7 +1,6 @@
 <template>
   <el-input
     v-model="input"
-    :value="search"
     :size="size"
     type="text"
     :placeholder="placeholder"
